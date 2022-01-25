@@ -1,5 +1,16 @@
 package com.qa.springsandbox.controller;
 
+// Task
+//
+//Implement the update method
+//Verify updates work with postman
+//Implement the delete method
+//Verify deletes work with postman
+//Stretch task:
+//
+//Package your application as a jar file
+//Run the jar file and test that your CRUD functionality works with Postman
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +73,11 @@ public class UserController {
 	}
 
 	private boolean userExists(long id) {
-		for(User user : users)
+		for (User user : users) {
+			if (user.getId() == id) {
+				
+			} return true;
+		}
 	}
 
 }
