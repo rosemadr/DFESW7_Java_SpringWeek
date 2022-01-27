@@ -1,21 +1,13 @@
 package com.qa.springsandbox.controller;
 
-// Task
-//
-//Implement the update method
-//Verify updates work with postman
-//Implement the delete method
-//Verify deletes work with postman
-//Stretch task:
-//
-//Package your application as a jar file
-//Run the jar file and test that your CRUD functionality works with Postman
-
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,57 +19,62 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.qa.springsandbox.data.entity.User;
+import com.qa.springsandbox.service.UserService;
 
 @RestController
 @RequestMapping(path = "/user")
 
 public class UserController {
 
-	private static long counter = 0;
+	private UserService userService;
 
-	private List<User> users = new ArrayList<>(
-			List.of(new User(counter++, "Peter", "Parker", 20), new User(counter++, "Bruce", "Banner", 35)));
+	@Autowired // Indicates repository injected by dependency injection
+	public UserController(UserService userService) {
+		this.userService = userService;
+	}
 
 	@GetMapping // localhost:8080/user
-	public List<User> getUsers() {
+	public ResponseEntity<List<User>> getUsers() {
+		ResponseEntity<List<User>> users = ResponseEntity.ok(userService.getAll());
 		return users;
 	}
 
 	// {id} is a path variable
 	@RequestMapping(path = "/{id}", method = { RequestMethod.GET })
-	public User getUserById(@PathVariable("id") int id) {
-		for (User user : users) {
-			if (user.getId() == id) {
-				return user;
-			}
-		}
-		throw new EntityNotFoundException("Entity with id " + id + " was not found.");
+	public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
+		User savedUser = userService.getById(id);
+
+		ResponseEntity<User> response = ResponseEntity.status(HttpStatus.OK); // ??
+
+		return response;
 	}
 
 	@PostMapping
-	public User createUser(@RequestBody User user) {
-		user.setId(counter++);
-		users.add(user);
-		return user;
+	public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+		User savedUser = userService.create(user);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Location", "/user/ " + String.valueOf(savedUser.getId()));
+
+		ResponseEntity<User> response = new ResponseEntity<User>(savedUser, headers, HttpStatus.CREATED);
+		return response;
 	}
 
 	@PutMapping("/{id}")
-	public User updateUser(@PathVariable("id") long id, @RequestBody User user) {
-		// TODO: Update user in list if they exist
-		return null;
+	public ResponseEntity<User> updateUser(@PathVariable("id") long id, @Valid @RequestBody User user) {
+		User updatedUser = userService.update(id, user);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Location", "/user/ " + String.valueOf(updatedUser.getId()));
+
+		return new ResponseEntity<User>(updatedUser, headers, HttpStatus.ACCEPTED);
 	}
 
 	@DeleteMapping("/{id}")
-	public void deleteUser(@PathVariable("id") long id) {
-		// TODO: Update user in list if they exist
-	}
+	public ResponseEntity<?> deleteUser(@PathVariable("id") long id) {
+		userService.delete(id);
+		return ResponseEntity.accepted().build();
 
-	private boolean userExists(long id) {
-		for (User user : users) {
-			if (user.getId() == id) {
-				
-			} return true;
-		}
 	}
 
 }

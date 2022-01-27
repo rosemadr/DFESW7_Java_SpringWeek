@@ -2,11 +2,35 @@ package com.qa.springsandbox.data.entity;
 
 import java.util.Objects;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
+
+@Entity
+@Table(name = "user")
 public class User {
 
-	private long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@NotNull
+	@Length(min = 1, message = "Names cannot be empty")
 	private String forename;
+
+	@NotNull
+	@Length(min = 1, message = "Names cannot be empty")
 	private String surname;
+
+	@Min(18)
+	@Max(130)
 	private Integer age;
 
 	public User(long id, String forename, String surname, Integer age) {
@@ -28,11 +52,11 @@ public class User {
 		super();
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
