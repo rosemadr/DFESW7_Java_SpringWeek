@@ -49,12 +49,13 @@ public class UserController {
 		return response;
 	}
 
+//
 	@PostMapping
 	public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
 		User savedUser = userService.create(user);
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("Location", "/user/ " + String.valueOf(savedUser.getId()));
+		headers.add("Location", "/user/" + String.valueOf(savedUser.getId()));
 
 		ResponseEntity<User> response = new ResponseEntity<User>(savedUser, headers, HttpStatus.CREATED);
 		return response;
@@ -65,7 +66,7 @@ public class UserController {
 		User updatedUser = userService.update(id, user);
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("Location", "/user/ " + String.valueOf(updatedUser.getId()));
+		headers.add("Location", "/user/" + String.valueOf(updatedUser.getId()));
 
 		return new ResponseEntity<User>(updatedUser, headers, HttpStatus.ACCEPTED);
 	}

@@ -92,8 +92,31 @@ public class UserControllerWebIntegrationTest {
 		verify(userService, times(1)).getById(1l);
 	}
 
-//	@Test
-//	Public void updateUser Test
-//	
+	@Test
+	public void updateUserTest() {
+		// given
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Location", "/user/" + validUser.getId());
+		ResponseEntity<User> expected = new ResponseEntity<User>(validUser, headers, HttpStatus.ACCEPTED);
+		// WHEN
+		when(userService.update(1l, userToCreate)).thenReturn(validUser);
+		// then
+		ResponseEntity<User> actual = controller.updateUser(1l, userToCreate);
+		assertThat(expected).isEqualTo(actual);
+		// verify
+		verify(userService, times(1)).update(1l, userToCreate);
+	}
+
+	@Test
+	public void deleteUserTest() {
+		// given
+		long TestId = 1;
+		ResponseEntity<?> expected = ResponseEntity.accepted().build();
+		ResponseEntity<?> actual = controller.deleteUser(TestId);
+		// assert
+		assertThat(expected).isEqualTo(actual);
+		// verify
+		verify(userService, times(1)).delete(TestId);
+	}
 
 }
