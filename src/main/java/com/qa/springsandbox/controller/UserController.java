@@ -44,7 +44,7 @@ public class UserController {
 	public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
 		User savedUser = userService.getById(id);
 
-		ResponseEntity<User> response = ResponseEntity.status(HttpStatus.OK); // ??
+		ResponseEntity<User> response = ResponseEntity.status(HttpStatus.OK).body(savedUser); // ??
 
 		return response;
 	}
